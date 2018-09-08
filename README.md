@@ -26,3 +26,11 @@ It can be executed using the following command:
 ```
 $ spark-submit --class insights.InsightsApp --master local[6] --num-executors 6 --driver-memory 2G target/scala-2.11/flight-insights_2.11-0.1.jar /data/source/folder
 ```
+
+This App in local mode is currently taking the following time to execute in a regular laptop (output from `time` bash command):
+
+```
+real	0m28.248s
+user	1m39.277s
+sys	0m5.310s
+```
