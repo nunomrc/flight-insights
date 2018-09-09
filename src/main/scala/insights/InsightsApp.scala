@@ -2,6 +2,18 @@ package insights
 
 import org.apache.spark.sql.SparkSession
 
+/**
+  * App to provide to a spark-submit command, to run as a spark application.
+  * Details on how to run are given in the README file.
+  *
+  * Each transform operation is timed where I try to make it comparable:
+  * - operation a) reads the data, joins, and caches it.
+  * - the other operations get a cached DataFrame/RDD, make the necessary transformations,
+  *   and save the data into a single CSV file. This is done for demonstration purposes only,
+  *   in a real case scenario with a big data set running on a cluster, the final result would be
+  *   coalesced to a number that would make sense when connecting into the next stage of the data
+  *   processing pipeline.
+  */
 object InsightsApp {
   def main(args: Array[String]) {
 
