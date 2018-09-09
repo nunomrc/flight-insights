@@ -53,7 +53,6 @@ object FlightInsights {
       .join(airlines, master("AirlineID") === airlines("AirlineCode"))
       .join(cityMarkets, master("DestCityMarketID") === cityMarkets("CityMarketCode"))
       .join(airports, master("DestAirportID") === airports("AirportCode"))
-      .cache()
   }
 
   private def safeDouble(v: String): Double = Try(v.toDouble).toOption.getOrElse(0d)

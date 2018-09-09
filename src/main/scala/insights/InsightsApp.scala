@@ -16,13 +16,15 @@ object InsightsApp {
 
     println("Reading data...")
     val joinedMaster = timed("operation-a")(
-      FlightInsights.readData(sourceFolder, spark)
+      FlightInsights.readData(sourceFolder, spark).cache()
     )
+
     timed("operation-b")(
       FlightInsights.leastDelay(spark, joinedMaster)
         .coalesce(1)
         .write.csv("result/b")
     )
+
     timed("operation-c")(
       FlightInsights.mostFlightsTo(spark, joinedMaster, NYMarketID)
         .toDF()
@@ -38,6 +40,7 @@ object InsightsApp {
         .coalesce(1)
         .write.csv("result/d")
     )
+
     timed("operation-e")(
       FlightInsights.worstAirlineAirportCombinationPartitioned(dataRDD)
         .toDF()
@@ -46,6 +49,5 @@ object InsightsApp {
     )
 
     spark.stop()
-
   }
 }

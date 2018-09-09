@@ -34,3 +34,6 @@ real	0m28.248s
 user	1m39.277s
 sys	0m5.310s
 ```
+
+Results are written in CSV to a folder named `results`, from where to app is executed.
+Performance measurements are taken for each query and output during the execution of the job.
