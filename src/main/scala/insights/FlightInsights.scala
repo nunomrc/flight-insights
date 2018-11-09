@@ -97,6 +97,7 @@ object FlightInsights {
 
     master
       .select($"AirlineID", $"AirlineName", $"ArrDelayMinutes".as[Double])
+      .where($"ArrDelayMinutes" > 0)
       .sort($"ArrDelayMinutes")
   }
 
@@ -114,13 +115,29 @@ object FlightInsights {
 
     master
       .select($"AirlineID", $"DestCityMarketID", $"AirlineName")
-      .groupBy("AirlineID", "DestCityMarketID", "AirlineName")
+      .groupBy("DestCityMarketID", "AirlineID", "AirlineName")
       .count()
       .sort($"count".desc)
       .where($"DestCityMarketID" === cityMarketID)
   }
 
-  /**
+  type Collector = (Int, FlightRow)
+
+  def mostFlightsTo(master: RDD[FlightRow], cityMarketID: String) = {
+    def createCollector(f: FlightRow): Collector = (1, f)
+    def combiner(collector: Collector, f: FlightRow): Collector = (collector._1 + 1, collector._2)
+    def merger(c1: Collector, c2: Collector): Collector = (c1._1 + c2._1, c1._2)
+
+    val grouped = master
+      .map(f => (f.destAirportID, f.airlineID) -> f)
+      .combineByKey(createCollector, combiner, merger)
+    grouped
+        .filter(_._1._2 == cityMarketID)
+      .sortBy { case (_, (numFlights, _)) => - numFlights}
+      .map { case (_, (numFlights, f)) => (f.destAirportName, f.airLineName, numFlights) }
+  }
+
+    /**
     * Groups the data set to answer on which airlines arrive the worst on which airport and by what delay.
     * It uses a SortKey case class to define a composed key to be used by the sorting, which is defined
     * in its companion object.

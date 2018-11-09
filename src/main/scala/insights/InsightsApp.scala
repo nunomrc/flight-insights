@@ -46,6 +46,13 @@ object InsightsApp {
 
     val dataRDD = FlightInsights.toRDD(joinedMaster).cache()
 
+    timed("danger")(
+      FlightInsights.mostFlightsTo(dataRDD, NYMarketID)
+        .toDF()
+        .coalesce(1)
+        .write.csv("result/danger")
+    )
+
     timed("operation-d")(
       FlightInsights.worstAirlineAirportCombination(dataRDD)
         .toDF()
